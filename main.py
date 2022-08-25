@@ -5,7 +5,32 @@ nltk.download('stopwords')
 from nltk.classify import NaiveBayesClassifier
 from nltk.corpus import stopwords
 from nltk.classify.util import accuracy
+import random
 
+def train(s):
+    transprobs = {}
+    
+    starterwords = s.split()
+    #make for loop end at second to last word
+    #get rid of repeat words
+    for i in range (len(starterwords)-1):
+        transprobs.setdefault(starterwords[i], [])
+        transprobs[starterwords[i]].append(starterwords[i+1])
+        #transprobs[w] = starterwords[starterwords.index(w)+1]
+
+    transprobs.setdefault(starterwords[len(starterwords)-1], [])
+    transprobs[starterwords[len(starterwords)-1]].append(starterwords[0])
+    return transprobs
+
+def generate(model, first_word, num_words):
+    output = first_word
+    #pick random value from the corresponding first word key
+    output += " " + random.choice(model[first_word])
+    #add this value to the output with a space in front
+    for i in range(num_words):
+        outputlist = output.split()
+        output += " " + random.choice(model[outputlist[-1]])
+    return output    
 # "Stop words" that you might want to use in your project/an extension
 stop_words = set(stopwords.words('english'))
 
@@ -91,3 +116,5 @@ def classify_reviews():
 
 if __name__ == "__main__":
     classify_reviews()
+    model = train("You've got a hold of me Don't even know your power I stand a hundred feet But I fall when I'm around you Show me an open door Then you go and slam it on me I can't take anymore I'm saying baby Please have mercy on me Take it easy on my heart Even though you don't mean to hurt me You keep tearing me apart Would you please have mercy, mercy on my heart Would you please have mercy, mercy on my heart I'd drive through the night Just to be near you, baby Heart open, testify Tell me that I'm not crazy I'm not asking for a lot Just that you're honest with me My pride is all I got I'm saying baby Please have mercy on me Take it easy on my heart Even though you don't mean to hurt me You keep tearing me apart Would you please have mercy on me I'm a puppet on your string And even though you got good intentions I need you to set me free Would you please have mercy, mercy on my heart Would you please have mercy, mercy on my heart Consuming all the air inside my lungs Ripping all the skin from off my bones I'm prepared to sacrifice my life I would gladly do it twice Consuming all the air inside my lungs Ripping all the skin from off my bones I'm prepared to sacrifice my life I would gladly do it twice Please have mercy on me Take it easy on my heart Even though you don't mean to hurt me You keep tearing me apart Would you please have mercy on me I'm a puppet on your string And even though you got good intentions I need you to set me free I'm begging you for mercy, mercy Begging you, begging you, please, baby I'm begging you for mercy, mercy Ooh, I'm begging you, I'm begging you")
+    print(generate(model, "I", 40))
